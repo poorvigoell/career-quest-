@@ -7,15 +7,6 @@ import CareerCard, { CareerCardProps } from "@/components/CareerCard";
 // Sample career data
 const careerData: CareerCardProps[] = [
   {
-    id: "1",
-    title: "Startup CEO",
-    emoji: "👨‍💼",
-    duration: "5 mins",
-    difficulty: 4,
-    description: "Survive a day as a CEO making tough decisions for your tech startup.",
-    category: "Leadership"
-  },
-  {
     id: "2",
     title: "AI Researcher",
     emoji: "🤖",
@@ -35,6 +26,15 @@ const careerData: CareerCardProps[] = [
   },
   {
     id: "4",
+    title: "Cybersecurity Analyst",
+    emoji: "🔒",
+    duration: "7 mins",
+    difficulty: 4,
+    description: "Protect systems from threats and respond to security incidents.",
+    category: "Tech"
+  },
+  {
+    id: "5",
     title: "Data Scientist",
     emoji: "📊",
     duration: "6 mins",
@@ -43,7 +43,7 @@ const careerData: CareerCardProps[] = [
     category: "Tech"
   },
   {
-    id: "5",
+    id: "6",
     title: "Marketing Manager",
     emoji: "📢",
     duration: "5 mins",
@@ -52,7 +52,7 @@ const careerData: CareerCardProps[] = [
     category: "Marketing"
   },
   {
-    id: "6",
+    id: "7",
     title: "Product Manager",
     emoji: "🛠️",
     duration: "7 mins",
@@ -61,7 +61,7 @@ const careerData: CareerCardProps[] = [
     category: "Business"
   },
   {
-    id: "7",
+    id: "8",
     title: "Financial Analyst",
     emoji: "💰",
     duration: "6 mins",
@@ -70,7 +70,7 @@ const careerData: CareerCardProps[] = [
     category: "Finance"
   },
   {
-    id: "8",
+    id: "9",
     title: "Game Developer",
     emoji: "🎮",
     duration: "8 mins",
@@ -79,7 +79,7 @@ const careerData: CareerCardProps[] = [
     category: "Tech"
   },
   {
-    id: "9",
+    id: "10",
     title: "Social Media Manager",
     emoji: "📱",
     duration: "4 mins",

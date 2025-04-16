@@ -7,13 +7,13 @@ import CareerCard from "@/components/CareerCard";
 // Sample career data
 const featuredCareers = [
   {
-    id: "1",
-    title: "Startup CEO",
-    emoji: "👨‍💼",
-    duration: "5 mins",
+    id: "4",
+    title: "Cybersecurity Analyst",
+    emoji: "🔒",
+    duration: "7 mins",
     difficulty: 4,
-    description: "Survive a day as a CEO making tough decisions for your tech startup.",
-    category: "Leadership"
+    description: "Protect systems from threats and respond to security incidents.",
+    category: "Tech"
   },
   {
     id: "2",
