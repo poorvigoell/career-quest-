@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X, Rocket, User, Settings } from "lucide-react";
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -18,7 +19,7 @@ const Navbar = () => {
               </span>
             </Link>
           </div>
-          
+
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center space-x-6">
             <Link to="/careers" className="text-foreground hover:text-primary transition-colors">
@@ -30,12 +31,17 @@ const Navbar = () => {
             {/* <Link to="/scenarios" className="text-foreground hover:text-primary transition-colors">
               Scenarios
             </Link> */}
-            <button className="btn-primary">Sign Up Free</button>
+            <SignedOut>
+              <SignInButton />
+            </SignedOut>
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
           </div>
-          
+
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center">
-            <button 
+            <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="inline-flex items-center justify-center p-2 rounded-md text-foreground hover:bg-muted transition duration-150"
             >
@@ -44,33 +50,38 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-      
+
       {/* Mobile menu */}
       {isMenuOpen && (
         <div className="md:hidden">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white dark:bg-card shadow-lg">
-            <Link 
-              to="/careers" 
+            <Link
+              to="/careers"
               className="block px-3 py-2 rounded-md text-base font-medium text-foreground hover:bg-muted"
               onClick={() => setIsMenuOpen(false)}
             >
               Explore Careers
             </Link>
-            <Link 
-              to="/challenges" 
+            <Link
+              to="/challenges"
               className="block px-3 py-2 rounded-md text-base font-medium text-foreground hover:bg-muted"
               onClick={() => setIsMenuOpen(false)}
             >
               Skill Challenges
             </Link>
-            <Link 
-              to="/scenarios" 
+            <Link
+              to="/scenarios"
               className="block px-3 py-2 rounded-md text-base font-medium text-foreground hover:bg-muted"
               onClick={() => setIsMenuOpen(false)}
             >
               Scenarios
             </Link>
-            <button className="w-full mt-4 btn-primary">Sign Up Free</button>
+            <SignedOut>
+              <SignInButton />
+            </SignedOut>
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
           </div>
         </div>
       )}
