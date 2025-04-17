@@ -1,11 +1,11 @@
-
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Menu, X, Rocket, User, Settings } from "lucide-react";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <nav className="bg-white dark:bg-card border-b border-border sticky top-0 z-50">
@@ -35,7 +35,16 @@ const Navbar = () => {
               <SignInButton />
             </SignedOut>
             <SignedIn>
-              <UserButton />
+              <UserButton 
+                afterSignOutUrl="/"
+                userProfileMode="navigation" 
+                userProfileUrl="/profile"
+                appearance={{
+                  elements: {
+                    userButtonAvatarBox: "h-9 w-9 border-2 border-primary/20"
+                  }
+                }}
+              />
             </SignedIn>
           </div>
 
@@ -76,11 +85,21 @@ const Navbar = () => {
             >
               Scenarios
             </Link>
+            <SignedIn>
+              <Link
+                to="/profile"
+                className="block px-3 py-2 rounded-md text-base font-medium text-foreground hover:bg-muted flex items-center gap-2"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <User className="h-4 w-4" />
+                <span>Profile</span>
+              </Link>
+            </SignedIn>
             <SignedOut>
               <SignInButton />
             </SignedOut>
             <SignedIn>
-              <UserButton />
+              <UserButton afterSignOutUrl="/" />
             </SignedIn>
           </div>
         </div>
