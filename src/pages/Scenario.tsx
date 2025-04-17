@@ -1,251 +1,107 @@
-
-import { useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, MessageSquare, ThumbsUp, ThumbsDown, HelpCircle } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { ArrowLeft, CheckCircle, Star, Sparkles, Gauge, Zap, Trophy, Cpu } from "lucide-react";
 import Navbar from "@/components/Navbar";
-import ProgressBar from "@/components/ProgressBar";
-import ChoiceButton from "@/components/ChoiceButton";
 
 // Sample scenario data
 const scenarioData = {
   "2": {
     title: "AI Researcher",
     emoji: "🤖",
-    steps: [
-      {
-        id: 1,
-        content: "As an AI Researcher at a leading tech company, you're developing a new facial recognition algorithm. Your team needs to decide on the next approach after initial tests showed some bias in the system.",
-        choices: [
-          { id: "2a", text: "Diversify your training dataset to include more varied faces" },
-          { id: "2b", text: "Modify the neural network architecture to reduce bias" },
-          { id: "2c", text: "Implement post-processing techniques to correct for detected bias" }
-        ]
-      },
-      {
-        id: 2,
-        content: "You decide to diversify your training dataset. Your colleague suggests using synthetic data to fill gaps in your dataset diversity. What do you think?",
-        choices: [
-          { id: "2d", text: "Create synthetic data to augment real data for underrepresented groups" },
-          { id: "2e", text: "Partner with diverse organizations to collect more authentic data" },
-          { id: "2f", text: "Use transfer learning from a more diverse pre-trained model" }
-        ]
-      },
-      {
-        id: 3,
-        content: "You decide to use synthetic data to supplement real data. Results improve, but your research director is concerned about the ethics of your facial recognition system. What's your next step?",
-        choices: [
-          { id: "2g", text: "Develop a robust ethical framework with external oversight" },
-          { id: "2h", text: "Add an opt-out mechanism for users who don't want to be recognized" },
-          { id: "2i", text: "Limit the application to non-sensitive use cases only" }
-        ]
-      },
-      {
-        id: 4,
-        content: "You develop an ethical framework with outside experts. Now, you need to present your research at a major AI conference. How will you address the remaining limitations?",
-        choices: [
-          { id: "2j", text: "Be transparent about all limitations and invite community solutions" },
-          { id: "2k", text: "Focus on the strengths but acknowledge areas for improvement" },
-          { id: "2l", text: "Compare your results to competing approaches to highlight progress" }
-        ]
-      },
-      {
-        id: 5,
-        content: "Your transparent presentation was well-received. A tech startup offers to acquire your research for commercial use. What's your recommendation to your company?",
-        choices: [
-          { id: "2m", text: "License the technology with strict ethical usage requirements" },
-          { id: "2n", text: "Decline commercial applications until bias is further reduced" },
-          { id: "2o", text: "Partner to develop the technology with ongoing oversight" }
-        ]
-      }
-    ]
+    content: "As an AI Researcher, you'll explore cutting-edge problems in artificial intelligence, develop new algorithms, and make decisions about research approaches. Select your preferred difficulty level to start this career experience."
   },
   "3": {
     title: "UX Designer",
     emoji: "🎨",
-    steps: [
-      {
-        id: 1,
-        content: "You're a UX Designer at a digital agency, starting a new project for a healthcare app. The client wants a feature-rich platform, but you're concerned about usability. What's your first step?",
-        choices: [
-          { id: "3a", text: "Conduct user research to understand patient and doctor needs" },
-          { id: "3b", text: "Create wireframes based on competitor analysis" },
-          { id: "3c", text: "Build a prototype with the client's requested features" }
-        ]
-      },
-      {
-        id: 2,
-        content: "You decide to conduct user research. Your findings suggest simplified navigation is critical, but this conflicts with the client's desire for comprehensive menus. How do you proceed?",
-        choices: [
-          { id: "3d", text: "Present user data to convince the client to prioritize usability" },
-          { id: "3e", text: "Create alternative designs that balance both perspectives" },
-          { id: "3f", text: "Implement the client's vision but improve the information architecture" }
-        ]
-      },
-      {
-        id: 3,
-        content: "You create alternative designs that balance usability and feature access. The client selects your progressive disclosure approach. Now you need to define the color scheme. What's your approach?",
-        choices: [
-          { id: "3g", text: "Use the client's brand colors despite accessibility concerns" },
-          { id: "3h", text: "Modify brand colors to ensure WCAG compliance for accessibility" },
-          { id: "3i", text: "Propose a new palette that enhances both branding and accessibility" }
-        ]
-      },
-      {
-        id: 4,
-        content: "You modify the brand colors for accessibility. Initial user testing is positive about usability but reveals confusion about certain icons. What do you do?",
-        choices: [
-          { id: "3j", text: "Replace ambiguous icons with more universal symbols" },
-          { id: "3k", text: "Add text labels to all icons to clarify meaning" },
-          { id: "3l", text: "Create an onboarding tutorial explaining the interface" }
-        ]
-      },
-      {
-        id: 5,
-        content: "After addressing the icon issues, the final design is ready for handoff to developers. They express concerns about the complexity of animations you've included. How do you respond?",
-        choices: [
-          { id: "3m", text: "Simplify animations while preserving key interaction cues" },
-          { id: "3n", text: "Provide detailed specifications and offer implementation support" },
-          { id: "3o", text: "Prioritize which animations are essential vs. nice-to-have" }
-        ]
-      }
-    ]
+    content: "As a UX Designer, you'll create intuitive user experiences, balance client requests with good design principles, and make decisions that impact product usability. Select your preferred difficulty level to start this career experience."
   },
   "4": {
     title: "Cybersecurity Analyst",
     emoji: "🔒",
-    steps: [
-      {
-        id: 1,
-        content: "As a Cybersecurity Analyst at a financial institution, you've detected unusual login attempts to several employee accounts. This could be the beginning of a breach. What's your first action?",
-        choices: [
-          { id: "4a", text: "Lock the affected accounts and notify the account owners" },
-          { id: "4b", text: "Monitor the activity without intervention to track the pattern" },
-          { id: "4c", text: "Escalate to the security incident response team immediately" }
-        ]
-      },
-      {
-        id: 2,
-        content: "You decide to lock the accounts and notify owners. Further investigation reveals the attempts came from an unusual location but used correct credentials. What's your next step?",
-        choices: [
-          { id: "4d", text: "Implement company-wide password reset as a precaution" },
-          { id: "4e", text: "Enable additional authentication factors for all employees" },
-          { id: "4f", text: "Analyze recent phishing campaigns targeting your organization" }
-        ]
-      },
-      {
-        id: 3,
-        content: "You analyze recent phishing campaigns and find evidence of a sophisticated spear-phishing attack targeting executives. How do you protect against future attacks?",
-        choices: [
-          { id: "4g", text: "Conduct emergency security awareness training for executives" },
-          { id: "4h", text: "Implement tighter email filtering and scanning protocols" },
-          { id: "4i", text: "Create a comprehensive incident response plan specific to phishing" }
-        ]
-      },
-      {
-        id: 4,
-        content: "After implementing several security measures, you're asked to present findings to the board. They want to know the financial impact. How do you frame your report?",
-        choices: [
-          { id: "4j", text: "Emphasize the cost of the breach vs. cost of prevention" },
-          { id: "4k", text: "Present industry benchmarks on security breach impacts" },
-          { id: "4l", text: "Focus on regulatory compliance risks and potential fines" }
-        ]
-      },
-      {
-        id: 5,
-        content: "The board approves increased security funding. Now you need to prioritize investments across tools, training, and personnel. Which approach do you take?",
-        choices: [
-          { id: "4m", text: "Invest primarily in advanced threat detection technology" },
-          { id: "4n", text: "Balance spending between technology, training, and staffing" },
-          { id: "4o", text: "Focus on building an expanded internal security team" }
-        ]
-      }
-    ]
+    content: "As a Cybersecurity Analyst, you'll protect systems from threats, respond to security incidents, and make decisions that safeguard sensitive information. Select your preferred difficulty level to start this career experience."
   }
 };
 
-const feedbackMessages = {
-  "2a": "Good choice! Diversifying your training data is a fundamental approach to reducing bias in AI systems.",
-  "2b": "Architectural changes can help, but without addressing the underlying data issues, bias may persist.",
-  "2c": "Post-processing can be effective for known biases, but may miss underlying systemic issues in your model.",
-  "2d": "Synthetic data can be valuable, but be careful about introducing new biases through synthetic generation.",
-  "2e": "Partnering for authentic data collection is thorough but may take longer than synthetic approaches.",
-  "2f": "Transfer learning is efficient, but the original biases may transfer if not carefully managed.",
-  "2g": "External oversight helps ensure your ethical framework has diverse perspectives - excellent approach!",
-  "2h": "Opt-out mechanisms are important for privacy but don't address the underlying bias issues.",
-  "2i": "Limiting use cases is pragmatic but doesn't solve the fundamental technical challenges.",
-  "2j": "Transparency builds trust in the research community and can lead to collaborative improvements!",
-  "2k": "Balancing strengths and weaknesses is important, but full transparency is valued in research.",
-  "2l": "Comparative analysis is valuable but shouldn't come at the expense of transparency about limitations.",
-  "2m": "Ethical licensing shows responsibility while allowing innovation to reach users.",
-  "2n": "This cautious approach prioritizes ethics but might delay beneficial applications.",
-  "2o": "Partnerships with oversight represents a balanced approach to responsible commercialization!",
-  
-  "3a": "Excellent! Starting with user research ensures you're designing for actual needs rather than assumptions.",
-  "3b": "Competitor analysis is useful but shouldn't replace direct user research for understanding needs.",
-  "3c": "Building without research risks creating a product that doesn't meet user needs despite having many features.",
-  "3d": "Data-driven persuasion is effective, but be prepared with solutions, not just problems.",
-  "3e": "Finding a balance that satisfies both user needs and client goals is the ideal approach!",
-  "3f": "This approach may lead to a complex product that's organized well but still overwhelming for users.",
-  "3g": "Brand consistency is important, but accessibility should be non-negotiable, especially in healthcare.",
-  "3h": "Good choice! Modifying brand colors for accessibility shows you respect both branding and users' needs.",
-  "3i": "A new palette could be risky if the client is attached to their brand identity.",
-  "3j": "Excellent! Universal symbols improve intuitive understanding without requiring learning.",
-  "3k": "Labels add clarity but can create visual clutter if overused.",
-  "3l": "Tutorials help but requiring users to learn your interface indicates it might not be intuitive enough.",
-  "3m": "Good choice! This balances user experience with technical feasibility.",
-  "3n": "Supporting implementation shows teamwork, but may not address the core complexity issue.",
-  "3o": "Prioritization is practical and focuses resources on what truly matters for the user experience.",
-  
-  "4a": "Good immediate action! Stopping unauthorized access quickly is critical, though it might disrupt workflow.",
-  "4b": "Passive monitoring risks allowing a breach to continue, though it might reveal more about the attack pattern.",
-  "4c": "Escalation is appropriate but could be premature without basic information gathering.",
-  "4d": "Company-wide resets cause disruption and might be excessive without confirming a widespread breach.",
-  "4e": "MFA is a strong security measure that balances protection with usability!",
-  "4f": "Excellent analytical approach! Understanding the attack vector is crucial for effective response.",
-  "4g": "Targeted training addresses the specific vulnerability effectively!",
-  "4h": "Email filtering improvements are important but should be part of a comprehensive approach.",
-  "4i": "A response plan is valuable but doesn't address the immediate prevention needs.",
-  "4j": "Financial impact analysis speaks the language of the board and makes a compelling case!",
-  "4k": "Industry benchmarks provide helpful context but may not reflect your specific situation.",
-  "4l": "Regulatory focus is important but may miss broader business impact considerations.",
-  "4m": "Technology is important, but not at the expense of the human elements of security.",
-  "4n": "Excellent! A balanced approach addresses the full spectrum of security needs.",
-  "4o": "Building your team is valuable, but technology and training are also essential components."
-};
+// Difficulty level cards with enhanced visuals
+const difficultyLevels = [
+  {
+    id: "easy",
+    text: "Easy",
+    icon: <CheckCircle size={24} />,
+    bgGradient: "from-green-500/20 to-emerald-600/20",
+    borderColor: "border-green-500/30",
+    hoverBorder: "group-hover:border-green-500/60",
+    iconClass: "text-green-500 group-hover:text-green-600",
+    bgIcon: "bg-green-500/10 group-hover:bg-green-500/20",
+    description: "A gentle introduction with more guidance and straightforward challenges."
+  },
+  {
+    id: "intermediate",
+    text: "Medium",
+    icon: <Trophy size={24} />,
+    bgGradient: "from-amber-500/20 to-orange-600/20",
+    borderColor: "border-amber-500/30",
+    hoverBorder: "group-hover:border-amber-500/60",
+    iconClass: "text-amber-500 group-hover:text-amber-600",
+    bgIcon: "bg-amber-500/10 group-hover:bg-amber-500/20",
+    description: "Balanced challenges that require thoughtful consideration."
+  },
+  {
+    id: "hard",
+    text: "Hard",
+    icon: <Zap size={24} />,
+    bgGradient: "from-purple-500/20 to-violet-600/20",
+    borderColor: "border-purple-500/30",
+    hoverBorder: "group-hover:border-purple-500/60",
+    iconClass: "text-purple-500 group-hover:text-purple-600",
+    bgIcon: "bg-purple-500/10 group-hover:bg-purple-500/20",
+    description: "Complex scenarios that mirror real-world challenges."
+  }
+];
 
-// Component for feedback popup
-const FeedbackPopup = ({ choice, onClose }: { choice: string, onClose: () => void }) => {
-  const feedback = feedbackMessages[choice as keyof typeof feedbackMessages] || "Consider different factors when making this decision.";
+// Component for difficulty confirmation popup
+const DifficultyPopup = ({ difficulty, onClose, onConfirm }: { difficulty: string, onClose: () => void, onConfirm: () => void }) => {
+  const selectedDifficulty = difficultyLevels.find(level => level.id === difficulty);
+  
+  if (!selectedDifficulty) return null;
   
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/50 p-4">
-      <div className="bg-white dark:bg-card rounded-xl p-6 max-w-md w-full animate-scale-up shadow-xl">
-        <div className="flex justify-between items-start mb-4">
-          <div className="flex items-center gap-2 text-primary">
-            <MessageSquare size={24} />
-            <h3 className="text-lg font-semibold">Feedback</h3>
+    <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/50 backdrop-blur-sm p-4">
+      <div className="bg-white dark:bg-card rounded-xl p-8 max-w-md w-full animate-scale-up shadow-2xl border border-white/20">
+        <div className="flex justify-between items-start mb-6">
+          <div className="flex items-center gap-3">
+            <div className={`p-2.5 rounded-full ${selectedDifficulty.bgIcon}`}>
+              <Gauge size={24} className={selectedDifficulty.iconClass} />
+            </div>
+            <h3 className="text-xl font-bold">Confirm Difficulty</h3>
           </div>
-          <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
+          <button onClick={onClose} className="text-muted-foreground hover:text-foreground text-xl">
             &times;
           </button>
         </div>
-        <p className="mb-5">{feedback}</p>
-        <div className="flex justify-between">
-          <div className="flex gap-3">
-            <button className="flex items-center gap-1 text-sm text-muted-foreground hover:text-green-500">
-              <ThumbsUp size={16} />
-              Helpful
-            </button>
-            <button className="flex items-center gap-1 text-sm text-muted-foreground hover:text-red-500">
-              <ThumbsDown size={16} />
-              Not Helpful
-            </button>
+        
+        <div className="mb-6">
+          <div className="flex items-center gap-3 mb-3">
+            <div className={`p-2.5 rounded-full ${selectedDifficulty.bgIcon}`}>
+              {selectedDifficulty.icon}
+            </div>
+            <h4 className="font-semibold text-xl">{selectedDifficulty.text}</h4>
           </div>
+          <p className="text-muted-foreground">{selectedDifficulty.description}</p>
+        </div>
+        
+        <div className="flex justify-end gap-3">
           <button 
             onClick={onClose} 
-            className="px-4 py-2 bg-primary text-white rounded-lg text-sm hover:bg-primary/90"
+            className="px-4 py-2.5 border border-border rounded-lg font-medium hover:bg-muted transition-colors"
           >
-            Continue
+            Go Back
+          </button>
+          <button 
+            onClick={onConfirm} 
+            className={`px-6 py-2.5 text-white rounded-lg font-medium transition-colors bg-gradient-to-r ${selectedDifficulty.bgGradient.replace('/20', '')} hover:opacity-90`}
+          >
+            Begin Experience
           </button>
         </div>
       </div>
@@ -256,10 +112,14 @@ const FeedbackPopup = ({ choice, onClose }: { choice: string, onClose: () => voi
 const Scenario = () => {
   const { id = "1" } = useParams<{ id: string }>();
   const scenario = scenarioData[id as keyof typeof scenarioData];
+  const [showDifficultyPopup, setShowDifficultyPopup] = useState(false);
+  const [selectedDifficulty, setSelectedDifficulty] = useState("");
+  const [isLoaded, setIsLoaded] = useState(false);
+  const navigate = useNavigate(); // Add the navigate hook
   
-  const [currentStep, setCurrentStep] = useState(0);
-  const [showFeedback, setShowFeedback] = useState(false);
-  const [selectedChoice, setSelectedChoice] = useState("");
+  useEffect(() => {
+    setTimeout(() => setIsLoaded(true), 100);
+  }, []);
   
   if (!scenario) {
     return (
@@ -275,82 +135,99 @@ const Scenario = () => {
     );
   }
   
-  const { title, emoji, steps } = scenario;
-  const step = steps[currentStep];
-  const totalSteps = steps.length;
+  const { title, emoji, content } = scenario;
   
-  const handleChoice = (choiceId: string) => {
-    setSelectedChoice(choiceId);
-    setShowFeedback(true);
+  const handleDifficultySelect = (difficultyId: string) => {
+    setSelectedDifficulty(difficultyId);
+    setShowDifficultyPopup(true);
   };
   
-  const handleContinue = () => {
-    setShowFeedback(false);
-    if (currentStep < totalSteps - 1) {
-      setCurrentStep(currentStep + 1);
-    } else {
-      // Redirect to results page
-      window.location.href = `/skill-report/${id}`;
-    }
+  const handleBeginExperience = () => {
+    // In a real implementation, this would navigate to the first step of the scenario
+    // with the selected difficulty applied
+    navigate(`/challenge/${id}?difficulty=${selectedDifficulty}`);
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Decorative background elements */}
+      <div className="absolute top-0 right-0 w-[800px] h-[800px] rounded-full blur-3xl opacity-[0.15] bg-gradient-to-br from-primary/30 to-violet-700/30 pointer-events-none -translate-y-1/2 translate-x-1/3"></div>
+      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] rounded-full blur-3xl opacity-[0.1] bg-gradient-to-tr from-blue-700/40 to-emerald-700/40 pointer-events-none translate-y-1/3 -translate-x-1/3"></div>
+      
       <Navbar />
       
-      <div className="max-w-4xl mx-auto px-4 pt-8 pb-16">
-        {/* Header with progress */}
-        <div className="mb-8">
-          <div className="flex justify-between items-center mb-4">
-            <Link to="/careers" className="flex items-center text-muted-foreground hover:text-primary gap-1">
+      <div className="max-w-5xl mx-auto px-4 pt-8 pb-16 relative z-10">
+        {/* Header */}
+        <div className={`transition-all duration-700 ease-out transform ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
+          <div className="flex justify-between items-center mb-6">
+            <Link to="/careers" className="flex items-center text-muted-foreground hover:text-primary gap-1 transition-colors">
               <ArrowLeft size={18} />
               <span>Back to careers</span>
             </Link>
             <div className="flex items-center gap-2">
-              <span className="text-xl">{emoji}</span>
-              <h1 className="text-xl font-semibold">{title} Scenario</h1>
+              <span className="text-3xl">{emoji}</span>
+              <h1 className="text-xl font-semibold">{title} Experience</h1>
             </div>
-          </div>
-          
-          <div className="flex items-center gap-3">
-            <ProgressBar value={currentStep + 1} max={totalSteps} />
-            <span className="text-sm text-muted-foreground whitespace-nowrap">
-              {currentStep + 1}/{totalSteps}
-            </span>
           </div>
         </div>
         
         {/* Scenario content */}
-        <div className="scenario-card animate-fade-in">
-          <div className="mb-6">
-            <p className="text-lg">{step.content}</p>
+        <div className={`mb-12 transition-all duration-700 delay-100 ease-out transform ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
+          <div className="text-center max-w-3xl mx-auto">
+            <div className="inline-block p-1 bg-gradient-to-r from-primary/20 via-accent/20 to-secondary/20 rounded-full mb-8">
+              <div className="w-24 h-24 flex items-center justify-center text-5xl bg-card backdrop-blur-md rounded-full border border-white/10">
+                {emoji}
+              </div>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">{title}</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{content}</p>
           </div>
+        </div>
+        
+        {/* Difficulty selection cards */}
+        <div className={`transition-all duration-700 delay-200 ease-out transform ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
+          <h3 className="text-xl font-semibold mb-6 text-center">Select your difficulty level:</h3>
           
-          <div className="mt-6">
-            <h3 className="text-lg font-medium mb-3">What will you do?</h3>
-            {step.choices.map((choice) => (
-              <ChoiceButton
-                key={choice.id}
-                onClick={() => handleChoice(choice.id)}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {difficultyLevels.map((level, index) => (
+              <div 
+                key={level.id}
+                className={`group cursor-pointer transition-all duration-500 delay-${index * 100} ease-out transform ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}
+                onClick={() => handleDifficultySelect(level.id)}
               >
-                {choice.text}
-              </ChoiceButton>
+                <div className={`h-full flex flex-col p-6 rounded-xl border ${level.borderColor} ${level.hoverBorder} bg-gradient-to-br ${level.bgGradient} backdrop-blur-sm shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-xl`}>
+                  <div className="mb-4">
+                    <div className={`w-14 h-14 rounded-full ${level.bgIcon} flex items-center justify-center mb-4 transition-all duration-300`}>
+                      <div className={`${level.iconClass} transition-all duration-300`}>
+                        {level.icon}
+                      </div>
+                    </div>
+                    <h4 className="text-xl font-bold mb-2">{level.text}</h4>
+                    <p className="text-sm text-muted-foreground">{level.description}</p>
+                  </div>
+                  
+                  <div className="mt-auto pt-4 flex justify-between items-center border-t border-white/10">
+                    <div className={`text-xs font-medium px-2.5 py-1 rounded-full ${level.bgIcon} ${level.iconClass}`}>
+                      {level.id === 'easy' ? 'Beginner Friendly' : level.id === 'intermediate' ? 'Some Challenge' : 'Expert Level'}
+                    </div>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${level.bgIcon}`}>
+                      <ArrowLeft size={16} className={`${level.iconClass} rotate-180`} />
+                    </div>
+                  </div>
+                </div>
+              </div>
             ))}
-          </div>
-          
-          {/* Help icon */}
-          <div className="mt-8 text-center">
-            <button className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary">
-              <HelpCircle size={16} />
-              <span>Need more context?</span>
-            </button>
           </div>
         </div>
       </div>
       
-      {/* Feedback popup */}
-      {showFeedback && (
-        <FeedbackPopup choice={selectedChoice} onClose={handleContinue} />
+      {/* Difficulty confirmation popup */}
+      {showDifficultyPopup && (
+        <DifficultyPopup 
+          difficulty={selectedDifficulty} 
+          onClose={() => setShowDifficultyPopup(false)} 
+          onConfirm={handleBeginExperience}
+        />
       )}
     </div>
   );
