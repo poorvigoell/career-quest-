@@ -27,9 +27,9 @@ const Navbar = () => {
             <Link to="/challenges" className="text-foreground hover:text-primary transition-colors">
               Skill Challenges
             </Link>
-            <Link to="/scenarios" className="text-foreground hover:text-primary transition-colors">
+            {/* <Link to="/scenarios" className="text-foreground hover:text-primary transition-colors">
               Scenarios
-            </Link>
+            </Link> */}
             <button className="btn-primary">Sign Up Free</button>
           </div>
           
