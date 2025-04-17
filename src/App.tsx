@@ -9,6 +9,7 @@ import Challenges from "./pages/Challenges";
 import Scenario from "./pages/Scenario";
 import SkillChallenge from "./pages/SkillChallenge";
 import SkillReport from "./pages/SkillReport";
+import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/scenario/:id" element={<Scenario />} />
           <Route path="/challenge/:id" element={<SkillChallenge />} />
           <Route path="/skill-report/:id" element={<SkillReport />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
