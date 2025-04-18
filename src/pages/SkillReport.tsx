@@ -1,9 +1,10 @@
-
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { ArrowLeft, ArrowRight, Download, Share2, Award, Star, Info } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import SkillRating from "@/components/SkillRating";
 import Badge from "@/components/Badge";
+import { evaluateCodeWithGemini } from "../gemini";
 
 // Sample report data
 const reportData = {
@@ -45,48 +46,77 @@ const reportData = {
     ]
   },
   "2": {
-    title: "Data Analysis Challenge",
+    title: "Frontend development Challenge",
     emoji: "📊",
     category: "Tech",
     completedDate: new Date().toISOString(),
     summary: "You showed excellent pattern recognition and data cleaning abilities. Your insights were clear, but your visualizations could be more effective.",
     skills: [
-      { name: "Data Cleaning", rating: 9 },
-      { name: "Pattern Recognition", rating: 8 },
-      { name: "Statistical Analysis", rating: 7 },
-      { name: "Data Visualization", rating: 6 },
-      { name: "Insight Communication", rating: 7 }
+      { name: "Semantic HTML", rating: 9 },
+  { name: "Responsive Design", rating: 8 },
+  { name: "Accessibility (a11y)", rating: 7 },
+  { name: "CSS Styling & Layout", rating: 6 },
+  { name: "UI/UX Understanding", rating: 7 }
     ],
     strengths: [
-      "Thorough data preparation and cleaning",
-      "Finding meaningful patterns in complex data",
-      "Drawing actionable conclusions"
+      "Strong grasp of semantic HTML structure",
+      "Well-organized and readable markup",
+      "Good understanding of accessibility best practices"
     ],
     areas_to_improve: [
-      "Creating more effective visualizations",
-      "Streamlining your analysis process",
-      "Considering wider business context"
+      "Enhancing responsive design techniques",
+      "Improving visual layout using CSS Grid/Flexbox",
+      "Incorporating better SEO-friendly markup"
     ],
     badges: [
-      { id: 1, name: "Data Detective", variant: "primary" },
-      { id: 2, name: "Pattern Spotter", variant: "secondary" }
+      { id: 1, name: "Markup Master", variant: "primary" },
+      { id: 2, name: "Accessibility Advocate", variant: "secondary" }
     ],
     career_matches: [
-      { title: "Data Analyst", match: 88 },
-      { title: "Business Intelligence", match: 82 },
-      { title: "Market Research", match: 76 }
+      { title: "HTML/CSS Developer", match: 90 },
+      { title: "Frontend Web Developer", match: 85 },
+      { title: "Email Template Designer", match: 78 }
     ],
     recommendations: [
-      { type: "challenge", id: "5", title: "Data Visualization Challenge" },
-      { type: "scenario", id: "6", title: "Market Analysis Scenario" }
+      { type: "challenge", id: "12", title: "Responsive Web Design Challenge" },
+      { type: "scenario", id: "14", title: "Accessibility-Focused Landing Page Build" }
     ]
+    
   }
 };
 
 const SkillReport = () => {
   const { id = "1" } = useParams<{ id: string }>();
+  const { state } = useLocation();
   const report = reportData[id as keyof typeof reportData];
-  
+  const [summary, setSummary] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchSummary = async () => {
+      try {
+        const geminiResponse = await evaluateCodeWithGemini(state?.submission || "");
+        let summary;
+
+        // Check if the response is valid JSON or plain text
+        if (typeof geminiResponse === "string") {
+          summary = geminiResponse; // Plain text response
+        } else if (geminiResponse?.Summary) {
+          summary = geminiResponse.Summary; // Extract Summary from JSON
+        } else {
+          summary = "No summary available"; // Fallback
+        }
+
+        setSummary(summary); // Update summary with the extracted text
+      } catch (error) {
+        console.error("Error fetching summary from Gemini:", error);
+      }
+    };
+
+    if (state?.submission) {
+      fetchSummary();
+    }
+  }, [state?.submission]); // Trigger the effect when submission changes
+
   if (!report) {
     return (
       <div className="min-h-screen bg-background">
@@ -102,7 +132,7 @@ const SkillReport = () => {
   }
   
   const { 
-    title, emoji, category, completedDate, summary, skills, 
+    title, emoji, category, completedDate, skills, 
     strengths, areas_to_improve, badges, career_matches, recommendations 
   } = report;
   
@@ -163,7 +193,11 @@ const SkillReport = () => {
             
             <div className="mt-5 border-t border-border pt-5">
               <h2 className="text-lg font-semibold mb-2">Summary</h2>
-              <p className="text-muted-foreground">{summary}</p>
+              {summary ? (
+                <p className="text-muted-foreground">{summary}</p>
+              ) : (
+                <p>Loading summary...</p>
+              )}
             </div>
           </div>
         </div>

@@ -7,7 +7,7 @@ import CareerCard, { CareerCardProps } from "@/components/CareerCard";
 const careerData: CareerCardProps[] = [
   {
     id: "2",
-    title: "AI Researcher",
+    title: "Frontend Developer",
     emoji: "🤖",
     duration: "8 mins",
     difficulty: 5,

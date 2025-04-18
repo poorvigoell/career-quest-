@@ -1,6 +1,6 @@
 import Editor from "@monaco-editor/react";
 import { useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Clock, Info, Send, HelpCircle } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import ProgressBar from "@/components/ProgressBar";
@@ -42,22 +42,22 @@ You can use any design tools you're comfortable with. When complete, upload your
     submissionType: "upload",
   },
   "2": {
-    title: "Data Analysis Challenge",
+    title: "Frontend Ddevelopment Challenge",
     category: "Tech",
     emoji: "📊",
     description: "Analyze customer purchase data and identify trends",
     timeLimit: 20, // in minutes
     skillsRequired: [
-      "Data Analysis",
-      "Pattern Recognition",
-      "Insight Communication",
+      "HTML",
+      "Web Design",
+      "CSS",
     ],
-    instructions: `You've been provided with a dataset of customer purchases over the past year. Your task is to:
+    instructions: `Your task is to:
 
-1. Clean the data and handle any missing values
-2. Identify key purchasing patterns and trends
-3. Create at least one visualization of your findings
-4. Write a brief summary of insights (max 300 words)
+1. Design a box in HTML
+2. Title should be frontend developer
+3. Add a list of tasks
+4. Create a button
 
 Download the dataset using the link below and submit your analysis as a document or notebook.`,
     submissionType: "text",
@@ -67,6 +67,7 @@ Download the dataset using the link below and submit your analysis as a document
 const SkillChallenge = () => {
   const { id = "1" } = useParams<{ id: string }>();
   const challenge = challengeData[id as keyof typeof challengeData];
+  const navigate = useNavigate();
 
   const [timeRemaining, setTimeRemaining] = useState(
     challenge?.timeLimit * 60 || 0
@@ -75,6 +76,7 @@ const SkillChallenge = () => {
   const [submission, setSubmission] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [summary, setSummary] = useState<string | null>(null); // State to store the summary
 
   if (!challenge) {
     return (
@@ -115,13 +117,42 @@ const SkillChallenge = () => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setIsSubmitting(true);
-    // Simulate submission processing
-    setTimeout(() => {
-      window.location.href = `/skill-report/${id}`;
-    }, 2000);
+
+    if (submissionType === "text") {
+      try {
+        const input = await sendCodeToServer(submission);
+        setSummary(input); // Set the summary in the state
+        navigate(`/skill-report/${id}`, { state: { submission } }); // Pass submission to SkillReport page
+      } catch (error) {
+        console.error("Error during submission:", error);
+        alert("Failed to submit the code. Please try again.");
+      }
+    } else {
+      // Simulate file submission processing
+      setTimeout(() => {
+        navigate(`/skill-report/${id}`);
+      }, 2000);
+    }
+
+    setIsSubmitting(false);
   };
+
+  async function sendCodeToServer(code: string) {
+    const params = new URLSearchParams({ input: code });
+
+    return fetch(`http://127.0.0.1:5000/product/?${params}`)
+      .then((response) => {
+        if (!response.ok) throw new Error("Failed to fetch");
+        return response.json();
+      })
+      .then((data) => data.code)
+      .catch((error) => {
+        console.error("Error in fetch:", error);
+        return null;
+      });
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -194,32 +225,32 @@ const SkillChallenge = () => {
                 <h3 className="font-semibold mb-3">Your Submission</h3>
 
                 {submissionType === "text" ? (
-  <div className="mb-4">
-    {/* Container with border and shadow */}
-    <div className="rounded-xl overflow-hidden border border-primary/20 shadow-lg">
-      {/* Monaco Editor */}
-      <Editor
-        height="400px"
-        defaultLanguage="javascript"
-        theme="blueTheme"  // Use our custom blue theme
-        value={submission}
-        onChange={(value) => setSubmission(value || "")}
-        beforeMount={handleEditorWillMount}
-        options={{
-          fontFamily: 'monospace',
-          fontSize: 14,
-          cursorBlinking: 'smooth',
-          cursorSmoothCaretAnimation: "on",
-          smoothScrolling: true,
-          minimap: { enabled: true },
-          scrollBeyondLastLine: false,
-          automaticLayout: true,
-          wordWrap: 'on',
-        }}
-        className="w-full"
-      />
-    </div>
-  </div>
+                  <div className="mb-4">
+                    {/* Container with border and shadow */}
+                    <div className="rounded-xl overflow-hidden border border-primary/20 shadow-lg">
+                      {/* Monaco Editor */}
+                      <Editor
+                        height="400px"
+                        defaultLanguage="javascript"
+                        theme="blueTheme" // Use our custom blue theme
+                        value={submission}
+                        onChange={(value) => setSubmission(value || "")}
+                        beforeMount={handleEditorWillMount}
+                        options={{
+                          fontFamily: "monospace",
+                          fontSize: 14,
+                          cursorBlinking: "smooth",
+                          cursorSmoothCaretAnimation: "on",
+                          smoothScrolling: true,
+                          minimap: { enabled: true },
+                          scrollBeyondLastLine: false,
+                          automaticLayout: true,
+                          wordWrap: "on",
+                        }}
+                        className="w-full"
+                      />
+                    </div>
+                  </div>
                 ) : (
                   <div className="mb-4">
                     <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
@@ -258,6 +289,13 @@ const SkillChallenge = () => {
                         </>
                       )}
                     </div>
+                  </div>
+                )}
+
+                {summary && (
+                  <div className="mt-4 p-4 bg-green-100 text-green-800 rounded-lg">
+                    <h3 className="font-semibold mb-2">Summary:</h3>
+                    <p>{summary}</p>
                   </div>
                 )}
 

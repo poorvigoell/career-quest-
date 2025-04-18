@@ -6,9 +6,9 @@ import Navbar from "@/components/Navbar";
 // Sample scenario data
 const scenarioData = {
   "2": {
-    title: "AI Researcher",
+    title: "Fronendend Developer",
     emoji: "🤖",
-    content: "As an AI Researcher, you'll explore cutting-edge problems in artificial intelligence, develop new algorithms, and make decisions about research approaches. Select your preferred difficulty level to start this career experience."
+    content: "As an frontend developer, you'll explore cutting-edge AI problems, make research decisions, and create user-friendly interfaces. Select your preferred difficulty level to start this career experience."
   },
   "3": {
     title: "UX Designer",

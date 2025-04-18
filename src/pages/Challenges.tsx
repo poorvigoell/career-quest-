@@ -19,13 +19,13 @@ const challengeData = [
   },
   {
     id: "2",
-    title: "Data Analysis Challenge",
+    title: "Frontend development Challenge",
     category: "Tech",
     emoji: "📊",
     description: "Analyze customer purchase data and identify trends",
     timeLimit: 20, // in minutes
     difficulty: 4,
-    skillsRequired: ["Data Analysis", "Pattern Recognition", "Insight Communication"]
+    skillsRequired: ["HTML", "CSS", "Javascript"]
   },
   {
     id: "3",
