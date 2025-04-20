@@ -1,6 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: "AIzaSyBx60VnSHQ4tlcp9OkUWonC2xzFMs0RGAo" });
+const ai = new GoogleGenAI({ apiKey: "" });
 
 export async function evaluateCodeWithGemini(code_submission) {
   try {
